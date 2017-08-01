@@ -1,0 +1,5 @@
+node_modules
+genCert.sh
+openssl.cnf
+ssl
+.idea
