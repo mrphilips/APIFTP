@@ -9,7 +9,7 @@ module.exports = {
             host: 'ec2-18-220-131-37.us-east-2.compute.amazonaws.com',
             key: '~/.ssh/tutorial.pem',
             ref: 'origin/master',
-            repo: 'git@github.com:mrphilips/APIFTP.git',
+            repo: 'https://github.com/mrphilips/APIFTP.git',
             path: '/home/ubuntu/tutorial-2',
             'post-deploy': 'npm install && pm2 startOrRestart ecosystem.config.js'
         }
