@@ -11,7 +11,7 @@ module.exports = {
             ref: 'origin/master',
             repo: 'https://github.com/mrphilips/APIFTP.git',
             path: '/home/ubuntu/tutorial-2',
-            'post-deploy': 'npm install && pm2 startOrRestart ecosystem.config.js'
+            'post-deploy': 'sudo npm install && pm2 startOrRestart ecosystem.config.js'
         }
     }
 }
