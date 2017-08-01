@@ -3,3 +3,4 @@ genCert.sh
 openssl.cnf
 ssl
 .idea
+.DS_Store
