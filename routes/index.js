@@ -36,16 +36,22 @@ router.get('/test',function(req, res) {
     //FTPService.putFile("myFile.txt", "clientFile.txt", "New File", res);
 })
 
+
+
 /* POST event */
 router.post('/send', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
 
     console.log(req.body.b);
 
-    res.send(JSON.stringify({
+    FTPService.putFile(req.body.content, "clientFile.txt", "New File", res);
+
+
+    /*res.send(JSON.stringify({
         content: 'post'
     }
-    ));
+    ));*/
+
 })
 
 module.exports = router;

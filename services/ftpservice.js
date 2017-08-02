@@ -1,7 +1,6 @@
 let Client = require('ftp')
 let fs = require('fs')
-
-
+let Readable = require('stream').Readable
 //let url = '192.168.1.207';
 let url='localhost';
 let user = 'test';
@@ -30,23 +29,16 @@ class FTPService {
         let c = new Client();
         c.on('ready', function(){
             c.get('CHR335.DAT', function(err, stream) {
-               // console.log(stream);
+                //console.log(stream);
 
-                stream.once('close', function() {c.end();})
-                stream.pipe(fs.createWriteStream('hello-copy.txt'));
-
-                fs.readFile('hello-copy.txt', 'utf8', function(err, data){
-                    console.log(data);
-                    console.log("data");
+                stream.on('data', (chunk) => {
+                    //console.log(chunk.toString());
 
                     res.send(JSON.stringify({
-                        content: data
+                        content: chunk.toString()
                     }))
 
-                    fs.unlinkSync('hello-copy.txt');
-
-                })
-
+                } );
             })
         })
 
@@ -57,22 +49,27 @@ class FTPService {
         })
     }
 
-    static putFile(localURI, remoteURI, content, res) {
+    static putFile(text, remoteURI, content, res) {
+        let fContent = `A 
+                TOTAL RANDOM
+            FILE CONTENT.`;
+
+
+        let s = new Readable();
+
+        s._read = function noop() {};
+
+        s.push(text);
+        s.push(null);
+
+        console.log(s);
 
         let c = new Client();
         c.on('ready', function(){
 
-            console.log("Creating file...");
-            fs.writeFile(localURI, content, function(err){
-                if(err)
-                    return console.log(err);
-
-                c.put(localURI, remoteURI, function(err) {
+            c.put(s, remoteURI, function(err) {
                     if(err)
                         throw err;
-
-                    console.log("Deleting file...");
-                    fs.unlinkSync(localURI);
 
                     res.send(JSON.stringify({
                         status: 'OK'
@@ -80,7 +77,6 @@ class FTPService {
 
                     c.end();
                 })
-            })
         })
 
         c.connect({
