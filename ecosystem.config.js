@@ -6,7 +6,7 @@ module.exports = {
     deploy: {
         production: {
             user: 'ubuntu',
-            host: 'ec2-18-220-131-37.us-east-2.compute.amazonaws.com',
+            host: 'ec2-13-59-42-82.us-east-2.compute.amazonaws.com',
             key: '~/.ssh/tutorial.pem',
             ref: 'origin/master',
             repo: 'https://github.com/mrphilips/APIFTP.git',
