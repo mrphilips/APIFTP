@@ -21,7 +21,7 @@ router.get('/testJSON', function(req, res){
 
   res.send(JSON.stringify({
       status:200,
-      content:'TEST JSON OK'
+      content:'JSON TEST OK'
   }));
 })
 

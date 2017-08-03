@@ -6,6 +6,4 @@ ssl
 .DS_Store
 ca.key
 ca.pem
-server.cer
-server.key
 server.req
