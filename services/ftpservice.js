@@ -25,28 +25,60 @@ class FTPService {
         });
     }
 
-    static getFile(uri, res) {
+    static getFile(res, content) {
         let c = new Client();
+
+        console.log(content);
+
         c.on('ready', function(){
-            c.get('CHR335.DAT', function(err, stream) {
-                //console.log(stream);
+            c.get(content.uri, function(err, stream) {
+                if(err)
+                   FTPService.sendFTPError(res,err, content);
 
-                stream.on('data', (chunk) => {
-                    //console.log(chunk.toString());
+                else
+                    stream.on('data', (chunk) => {
+                        //console.log(chunk.toString());
 
-                    res.send(JSON.stringify({
-                        content: chunk.toString()
-                    }))
+                        res.send(JSON.stringify({
+                            status:200,
+                            content: chunk.toString()
+                        }))
 
-                } );
+                    } );
             })
         })
 
-        c.connect({
-            host: url,
-            user: user,
-            password: password
+        c.on('error', function(err){
+            FTPService.sendFTPError(res, err, content);
         })
+
+        c.connect(content.config)
+    }
+
+    static sendFTPError(res, err, content){
+        var data = {status:0};
+
+        switch(err.code){
+            case 550:
+                data.error = content.uri+': Fichier non disponible';
+                break;
+
+            case 530:
+                data.error = content.config.user+': Connexion non établie';
+                break;
+
+            case 'ENOTFOUND':
+                data.error = content.config.host+': Serveur FTP introuvable';
+                break;
+
+            default:
+                data.error = 'Une erreur est survenue';
+                break;
+        }
+
+        data.error+=' ('+err.code+')';
+
+        res.send(JSON.stringify(data));
     }
 
     static putFile(text, remoteURI, content, res) {

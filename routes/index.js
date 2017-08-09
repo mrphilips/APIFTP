@@ -19,18 +19,32 @@ router.get('/', function(req, res) {
 router.get('/testJSON', function(req, res){
   res.setHeader('Content-Type', 'application/json');
 
+
   res.send(JSON.stringify({
       status:200,
       content:'JSON TEST OK'
   }));
 })
 
+
+router.post('/getFile', function(req, res){
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+
+//    console.log(req.body);
+
+    FTPService.getFile(res, req.body);
+
+})
+
 router.get('/test',function(req, res) {
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
- /*   res.send(JSON.stringify({
-      a: 1
-    }
-    ));*/
+
+    console.log(req.url);
+
+    /*   res.send(JSON.stringify({
+         a: 1
+       }
+       ));*/
 
     FTPService.getFile('/', res);
     //FTPService.putFile("myFile.txt", "clientFile.txt", "New File", res);
