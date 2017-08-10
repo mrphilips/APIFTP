@@ -53,12 +53,12 @@ router.get('/test',function(req, res) {
 
 
 /* POST event */
-router.post('/send', function(req, res) {
+router.post('/sendFile', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
 
     console.log(req.body.b);
 
-    FTPService.putFile(req.body.content, "clientFile.txt", "New File", res);
+    FTPService.putFile(res, req.body);
 
 
     /*res.send(JSON.stringify({

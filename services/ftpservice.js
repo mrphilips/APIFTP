@@ -81,41 +81,39 @@ class FTPService {
         res.send(JSON.stringify(data));
     }
 
-    static putFile(text, remoteURI, content, res) {
-        let fContent = `A 
-                TOTAL RANDOM
-            FILE CONTENT.`;
-
-
+    static putFile(res, content) {
+        console.log(content);
         let s = new Readable();
 
         s._read = function noop() {};
 
-        s.push(text);
+        s.push(content.file);
         s.push(null);
 
-        console.log(s);
+       // console.log(s);
 
         let c = new Client();
         c.on('ready', function(){
 
-            c.put(s, remoteURI, function(err) {
-                    if(err)
-                        throw err;
+            c.put(s, content.uri, function(err) {
+                if(err)
+                    FTPService.sendFTPError(res,err, content);
 
-                    res.send(JSON.stringify({
-                        status: 'OK'
+
+                res.send(JSON.stringify({
+                        status: 200,
+                        content:'OK'
                     }))
 
                     c.end();
                 })
         })
 
-        c.connect({
-            host: url,
-            user: user,
-            password: password
-        });
+        c.on('error', function(err){
+            FTPService.sendFTPError(res, err, content);
+        })
+
+        c.connect(content.config);
     }
 
 }
