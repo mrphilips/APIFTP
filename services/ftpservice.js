@@ -38,7 +38,7 @@ class FTPService {
                 else
                     stream.on('data', (chunk) => {
                         //console.log(chunk.toString());
-
+                        console.log(chunk.toString().split('\n').length)
                         res.send(JSON.stringify({
                             status:200,
                             content: chunk.toString()
