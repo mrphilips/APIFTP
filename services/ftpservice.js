@@ -69,6 +69,7 @@ class FTPService {
     static sendFTPError(res, err, content){
         var data = {status:0};
 
+        console.log(err);
         switch(err.code){
             case 550:
                 data.error = content.uri+': Fichier non disponible';
