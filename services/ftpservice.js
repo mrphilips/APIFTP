@@ -30,40 +30,45 @@ class FTPService {
 
         console.log(content);
 
-        c.on('ready', function() {
-            c.get(content.uri, function (err, stream) {
-                if (err)
-                    FTPService.sendFTPError(res, err, content);
+        if(!content.config)
+            FTPService.sendFTPError(res, {code:-1}, content);
 
-                else {
-                    let str = '';
-                    stream.on('data', (chunk) => {
-                        str += chunk.toString();
-                        //console.log(chunk.toString());
-                        //console.log(chunk.toString().split('\n').length)
+        else {
+            c.on('ready', function () {
+                c.get(content.uri, function (err, stream) {
+                    if (err)
+                        FTPService.sendFTPError(res, err, content);
+
+                    else {
+                        let str = '';
+                        stream.on('data', (chunk) => {
+                            str += chunk.toString();
+                            //console.log(chunk.toString());
+                            //console.log(chunk.toString().split('\n').length)
 
 
-                    });
+                        });
 
-                    stream.on('end', function () {
-                        console.log('END');
-                        console.log(str.split('\n').length);
+                        stream.on('end', function () {
+                            console.log('END');
+                            console.log(str.split('\n').length);
 
-                        res.send(JSON.stringify({
-                            status: 200,
-                            content: str
-                        }))
-                    })
+                            res.send(JSON.stringify({
+                                status: 200,
+                                content: str
+                            }))
+                        })
 
-                }
+                    }
+                })
             })
-        })
 
-        c.on('error', function(err){
-            FTPService.sendFTPError(res, err, content);
-        })
+            c.on('error', function (err) {
+                FTPService.sendFTPError(res, err, content);
+            })
 
-        c.connect(content.config)
+            c.connect(content.config)
+        }
     }
 
     static sendFTPError(res, err, content){
@@ -71,6 +76,10 @@ class FTPService {
 
         console.log(err);
         switch(err.code){
+            case -1:
+                data.error = 'Aucun serveur FTP configuré dans le terminal'
+                break;
+
             case 550:
                 data.error = content.uri+': Fichier non disponible';
                 break;
@@ -94,38 +103,44 @@ class FTPService {
     }
 
     static putFile(res, content) {
-        console.log(content);
-        let s = new Readable();
+        if(!content.config)
+            FTPService.sendFTPError(res, {code:-1}, content);
 
-        s._read = function noop() {};
+        else {
+            console.log(content);
+            let s = new Readable();
 
-        s.push(content.file);
-        s.push(null);
+            s._read = function noop() {
+            };
 
-       // console.log(s);
+            s.push(content.file);
+            s.push(null);
 
-        let c = new Client();
-        c.on('ready', function(){
+            // console.log(s);
 
-            c.put(s, content.uri, function(err) {
-                if(err)
-                    FTPService.sendFTPError(res,err, content);
+            let c = new Client();
+            c.on('ready', function () {
+
+                c.put(s, content.uri, function (err) {
+                    if (err)
+                        FTPService.sendFTPError(res, err, content);
 
 
-                res.send(JSON.stringify({
+                    res.send(JSON.stringify({
                         status: 200,
-                        content:'OK'
+                        content: 'OK'
                     }))
 
                     c.end();
                 })
-        })
+            })
 
-        c.on('error', function(err){
-            FTPService.sendFTPError(res, err, content);
-        })
+            c.on('error', function (err) {
+                FTPService.sendFTPError(res, err, content);
+            })
 
-        c.connect(content.config);
+            c.connect(content.config);
+        }
     }
 
 }
