@@ -30,21 +30,30 @@ class FTPService {
 
         console.log(content);
 
-        c.on('ready', function(){
-            c.get(content.uri, function(err, stream) {
-                if(err)
-                   FTPService.sendFTPError(res,err, content);
+        c.on('ready', function() {
+            c.get(content.uri, function (err, stream) {
+                if (err)
+                    FTPService.sendFTPError(res, err, content);
 
-                else
+                else {
+                    let str = '';
                     stream.on('data', (chunk) => {
+                        str += chunk.toString();
                         //console.log(chunk.toString());
-                        console.log(chunk.toString().split('\n').length)
+                        //console.log(chunk.toString().split('\n').length)
                         res.send(JSON.stringify({
-                            status:200,
+                            status: 200,
                             content: chunk.toString()
                         }))
 
-                    } );
+                    });
+
+                    stream.on('end', function () {
+                        console.log('END');
+                        console.log(str.split('\n').length);
+                    })
+
+                }
             })
         })
 
